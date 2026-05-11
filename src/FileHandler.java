@@ -13,7 +13,7 @@ public class FileHandler {
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     // ---------------------------------------------------------------
-    // CREATE / UPDATE — save a new score
+    // CREATE / UPDATE saves a new score
     // ---------------------------------------------------------------
 
     /**
