@@ -45,3 +45,4 @@ public class Snake {
 }
 // make sure to change the numbers when doing the board height and width
 // i left them mainly 0 for right now
+// this might be a little wocky it can be fixed once board and game panel is added
