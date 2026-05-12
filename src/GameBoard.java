@@ -88,7 +88,7 @@ public class GameBoard {
                 String[] parts = line.split("=");
                 if (parts.length == 2) {
                     if (parts[0].equals("rows")) settings[0] = Integer.parseInt(parts[1].trim());
-                    if (parts[0].equals("cols")) settings[0] = Integer.parseInt(parts[1].trim());
+                    if (parts[0].equals("cols")) settings[1] = Integer.parseInt(parts[1].trim());
                 }
             }
         } catch (IOException e) {
