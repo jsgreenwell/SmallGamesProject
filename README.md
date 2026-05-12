@@ -1,6 +1,6 @@
 Snake Game:
 
-A console-launched, Swing-rendered Snake game built in Java as part of a class project. Eat the food, grow your snake, and beat your high score — without hitting the walls or yourself.
+A console-launched, Swing-rendered Snake game built in Java as part of a class project. Eat the food, grow your snake, and beat your high score - without hitting the walls or yourself.
 
 How to Run:
 
