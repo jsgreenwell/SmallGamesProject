@@ -1,4 +1,19 @@
-public class Board {
+import java.io.*;
+import java.util.ArrayList;
+
+/**
+ * GameBoard.java
+ * Stores the game grid and handles wall collision detection.
+ * Works on grid coordinates {row, col} matching Snake.java and snakeFood.java.
+ * Board settings (size) are saved and loaded from board_settings.txt.
+ */
+
+public class GameBoard {
+
+    // Default board size - change these to resize the game.
+    public static final int DEFAULT_ROWS = 24;
+    public static final int DEFAULT_COLS = 32;
+
 
     private int rows;
     private int cols;
@@ -6,7 +21,7 @@ public class Board {
     private ArrayList<String> wallPositions; // LIST data structure
 
     // Constructor - sets up the board
-    public Board(int rows, int cols) {
+    public GameBoard(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
         this.grid = new char[rows][cols];
@@ -31,68 +46,61 @@ public class Board {
 
     // Place a symbol (snake, food, etc.) on the board
     public void placeSymbol(int row, int col, char symbol) {
-        grid[row][col] = symbol;
+        if (inBounds(row, col)) grid[row][col] = symbol;
     }
 
     // Clear a cell back to empty
     public void clearCell(int row, int col) {
-        grid[row][col] = '.';
+        if (inBounds(row, col)) grid[row][col] = '.';
     }
 
-    // Print the board to the console
-    public void drawBoard() {
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                System.out.print(grid[r][c]);
-            }
-            System.out.println();
-        }
-    }
 
     // Check if a position is a wall (for collision detection)
     public boolean isWall(int row, int col) {
+        if (!inBounds(row, col)) return true;
         return grid[row][col] == '#';
     }
 
-    public int getRows() { return rows; }
-    public int getCols() { return cols; }
+    // Returns true if the position is within the grid
+    public boolean inBounds(int row, int col) {
+        return row >= 0 && row < rows && col >= 0 && col < cols;
+    }
 
-    // Write board size to a file
     public void saveSettings() {
-        try {
-            FileWriter writer = new FileWriter("board_settings.txt");
-            writer.write("rows=" + rows + "\n");
-            writer.write("cols=" + cols + "\n");
-            writer.close();
+        try (FileWriter fw = new FileWriter("board_settings.txt")) {
+            fw.write("rows=" + rows + "\n");
+            fw.write("cols=" + cols + "\n");
         } catch (IOException e) {
-            System.out.println("Could not save settings.");
+            System.out.println("[Board] Could not save settings: " + e.getMessage());
         }
     }
 
-    // Read board size from a file
+/**
+ * Loads board dimensions from board_settings.txt.
+ * Returns {DEFAULT_ROWS, DEFAULT_COLS} if file not found.
+ */
+
     public static int[] loadSettings() {
-        int[] settings = {20, 20};
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader("board_settings.txt"));
+        int[] settings = {DEFAULT_ROWS, DEFAULT_COLS};
+        try (BufferedReader br = new BufferedReader(new FileReader("board_settings.txt"))) {
             String line;
-            while ((line = reader.readLine()) != null) {
+            while ((line = br.readLine()) != null) {
                 String[] parts = line.split("=");
-                if (parts[0].equals("rows")) settings[0] = Integer.parseInt(parts[1]);
-                if (parts[0].equals("cols")) settings[1] = Integer.parseInt(parts[1]);
+                if (parts.length == 2) {
+                    if (parts[0].equals("rows")) settings[0] = Integer.parseInt(parts[1].trim());
+                    if (parts[0].equals("cols")) settings[0] = Integer.parseInt(parts[1].trim());
+                }
             }
-            reader.close();
         } catch (IOException e) {
-            System.out.println("No settings file found. Using 20x20.");
+            System.out.println("[Board] No settings file found. Using " +
+                    DEFAULT_ROWS + "x" + DEFAULT_COLS + ".");
         }
         return settings;
     }
 
-    // Test the board on its own
-    public static void main(String[] args) {
-        int[] settings = Board.loadSettings();
-        Board board = new Board(settings[0], settings[1]);
-        board.placeSymbol(5, 5, 'S');
-        board.placeSymbol(3, 8, 'F');
-        board.drawBoard();
-    }
+    // GETTERS
+    public int getRows() { return rows; }
+    public int getCols() { return cols; }
+    public ArrayList<String> getWalls() { return wallPositions; }
 }
+
