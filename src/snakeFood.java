@@ -1,32 +1,54 @@
 import java.util.Random;
+import java.util.ArrayList;
 
+/**
+ * snakeFood.java
+ * Tracks the food position {row, col} grid coords
+ * Respawns in a random empty cell when snake eats food.
+  */
 public class snakeFood {
 
-    private int C;
-    private int V;
-    private final int foodSize;
-    private final Random rand;
+    private int row;
+    private int col;
+    private Random rand;
 
-    public snakeFood(int boardWidth, int boardHeight, int foodSize) { //make sure to add boardWidth and height numbers
-        this.foodSize = foodSize; //once those are added this will make more sense
-        this.rand = new Random();
-        respawn(boardWidth, boardHeight); //make sure to add that
+    public snakeFood(int boardRows, int boardCols) {
+        rand = new Random();
+        respawn(boardRows, boardCols, null);
     }
 
-    public void respawn(int boardWidth, int boardHeight) { //returns everything to the board in different spots
-        C = rand.nextInt(boardWidth / foodSize) * foodSize;
-        V = rand.nextInt(boardHeight / foodSize) * foodSize;
+    /**
+     * Moves the food to a new random cell that the snake is not in
+     * @param boardRows total rows on the board (not walls)
+     * @param boardCols total cols on the board (not walls)
+     * @param snakeBody snake segments to avoid = pass null if not needed
+     */
+    public void respawn(int boardRows, int boardCols, ArrayList<int[]> snakeBody) { //returns everything to the board in different spots
+        int newRow, newCol;
+        do {
+            // Stay inside walls (1 to rows-2, 1 to cols-2)
+            newRow = 1 + rand.nextInt(boardRows - 2);
+            newCol = 1 + rand.nextInt(boardCols - 2);
+        } while (isOnSnake(newRow, newCol, snakeBody));
+
+        row = newRow;
+        col = newCol;
     }
 
-    public int getC() {
-        return C;
+    /** @returns true if the given cell has the snake in it.*/
+     private boolean isOnSnake(int r, int c, ArrayList<int[]> snakeBody) {
+         if (snakeBody == null) return false;
+         for (int[] seg : snakeBody) {
+             if (seg[0] == r && seg[1] == c) return true;
+         }
+         return false;
     }
 
-    public int getV() {
-        return V;
-    }
+    public int getRow() { return row; }
+    public int getCol() { return col; }
+
 }
 
-// for when the snake actauuly gets close to the banana and eats it, it will disappear and the snake will get longer
+// for when the snake actually gets close to the banana and eats it, it will disappear and the snake will get longer
 //code for when the snake gets bigger
-// and than return the snake back to the board
+// and then return the snake back to the board
